@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html>
+
 <script src="https://d3js.org/d3.v4.js"></script>
 <body>
 <h2>Hello, D3!</h2>
 
-<svg id="myPlot" style="width:500px;height:500px"></svg>
+<svg id="svg1" style="width:500px;height:500px"></svg>
+<svg id="svg2" style="width:500px;height:500px"></svg>
 
 <script>
 
@@ -14,7 +16,14 @@ var margin = {top:20, right:20, bottom:20, left:30},
 	height = 400 - margin.top - margin.bottom
 
 //append SVG object to the page
-const svg = d3.select("#myPlot")
+const svg1 = d3.select("#svg1")
+	.append("svg")
+		.attr("width", width + margin.left + margin.right)
+		.attr("height", height + margin.top + margin.bottom)
+	.append("g")
+	.attr("transform","translate(" + margin.left + "," + margin.top + ")");
+
+const svg2 = d3.select("#svg2")
 	.append("svg")
 		.attr("width", width + margin.left + margin.right)
 		.attr("height", height + margin.top + margin.bottom)
@@ -24,34 +33,80 @@ const svg = d3.select("#myPlot")
 //how much the radius of each dot is scaled
 const dot_scale = 200000;
 
+// SVG1
+//add x axis
+var x1 = d3.scaleLinear()
+	.domain([10, 95])
+	.range([0, width]);
+svg1.append("g")
+	.attr("transform", "translate(0," + height + ")")
+	.call(d3.axisBottom(x1));
+
+//add y axis
+var y1 = d3.scaleLinear()
+	.domain([0, 100])
+	.range([height, 0]);
+svg1.append("g")
+	.call(d3.axisLeft(y1));
+
+// SVG2
+var x2 = d3.scaleBand()
+		.rangeRound([0, width])
+		.padding(0.2);
+var y2 = d3.scaleLinear()
+	.domain([0, 100])
+	.range([height, 0]);
+
+var xAxis2 = d3.axisBottom()
+	.scale(x2);
+
+var yAxis2 = d3.axisLeft()
+	.scale(y2)
+	.ticks(10);
+
 //read the data in the same directory
 d3.csv("/income_evaluation.csv", function(data) {
 
-	//add x axis
-	var x = d3.scaleLinear()
-		.domain([10, 95])
-		.range([0, width]);
-	svg.append("g")
-		.attr("transform", "translate(0," + height + ")")
-		.call(d3.axisBottom(x));
-
-	//add y axis
-	var y = d3.scaleLinear()
-		.domain([0, 100])
-		.range([height, 0]);
-	svg.append("g")
-		.call(d3.axisLeft(y));
-
 	//add dots
-	svg.append("g")
+	svg1.append("g")
 		.selectAll("dot")
 		.data(data)
 		.enter()
 		.append("circle")
-			.attr("cx", function (d) { return x(d.age);})
-			.attr("cy", function (d) { return y(d.hours_per_week);})
+			.attr("cx", function (d) { return x1(d.age);})
+			.attr("cy", function (d) { return y1(d.hours_per_week);})
 			.attr("r", function (d) { return d.fnlwgt/dot_scale;})
-      .style("fill", "#69b3a2")
+			.style("fill", "#937D9E")
+
+	svg2.append("g")
+			.attr("class", "x axis")
+			.attr("transform", "translate(0," + height + ")")
+			.call(xAxis2)
+		.selectAll("text")
+			.style("text-anchor", "end")
+			.attr("dx", "-.8em")
+			.attr("dy", "-.55em")
+			.attr("transform", "rotate(-90)" );
+
+	svg2.append("g")
+			.attr("class", "y axis")
+			.call(yAxis2)
+			.append("text")
+			.attr("transform", "rotate(-90)")
+			.attr("y", 6)
+			.attr("dy", ".71em")
+			.style("text-anchor", "end")
+
+  svg2.append("g")
+  		.selectAll("bar")
+      .data(data)
+    	.enter()
+    	.append("rect")
+      	.style("fill", "steelblue")
+      	.attr("x", function(d) { return x2(d.education);})
+      	.attr("width", x2.bandwidth())
+      	.attr("y", function(d) { return y2(d.hours_per_week);})
+      	.attr("height", function(d) { return height - y2(d.hours_per_week);})
 });
 
 </script>
