@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<script src="https://d3js.org/d3.v4.js"></script>
+<body>
+<h2>Hello, D3!</h2>
+
+<svg id="myPlot" style="width:500px;height:500px"></svg>
+
+<script>
+
+//set the dimensions and margins of the graph
+var margin = {top:20, right:20, bottom:20, left:20},
+	width = 500 - margin.left - margin.right,
+	height = 400 - margin.top - margin.bottom
+
+//append SVG object to the page
+const svg = d3.select("#myPlot")
+	.append("svg")
+		.attr("width", width + margin.left + margin.right)
+		.attr("height", height + margin.top + margin.bottom)
+	.append("g")
+	.attr("transform","translate(" + margin.left + "," + margin.top + ")");
+
+//read the data in the same directory
+d3.csv("/income_evaluation.csv", function(data) {
+
+	//add x axis
+	var x = d3.scaleLinear()
+		.domain([0, 50])
+		.range([0, width]);
+	svg.append("g")
+		.attr("transform", "translate(0," + height + ")")
+		.call(d3.axisBottom(x));
+
+
+});
+
+</script>
+
+</body>
+</html>
