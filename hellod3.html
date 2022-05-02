@@ -9,7 +9,7 @@
 <script>
 
 //set the dimensions and margins of the graph
-var margin = {top:20, right:20, bottom:20, left:20},
+var margin = {top:20, right:20, bottom:20, left:30},
 	width = 500 - margin.left - margin.right,
 	height = 400 - margin.top - margin.bottom
 
@@ -26,13 +26,29 @@ d3.csv("/income_evaluation.csv", function(data) {
 
 	//add x axis
 	var x = d3.scaleLinear()
-		.domain([0, 50])
+		.domain([10, 95])
 		.range([0, width]);
 	svg.append("g")
 		.attr("transform", "translate(0," + height + ")")
 		.call(d3.axisBottom(x));
 
+	//add y axis
+	var y = d3.scaleLinear()
+		.domain([0, 100])
+		.range([height, 0]);
+	svg.append("g")
+		.call(d3.axisLeft(y));
 
+	//add dots
+	svg.append("g")
+		.selectAll("dot")
+		.data(data)
+		.enter()
+		.append("circle")
+			.attr("cx", function (d) { return x(d.age);})
+			.attr("cy", function (d) { return y(d.hours_per_week);})
+			.attr("r", function (d) { return d.education_num/5;})
+      .style("fill", "#69b3a2")
 });
 
 </script>
