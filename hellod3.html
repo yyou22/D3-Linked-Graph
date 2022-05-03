@@ -67,6 +67,11 @@ var yAxis2 = d3.axisLeft()
 //read the data in the same directory
 d3.csv("/income_evaluation.csv", function(data) {
 
+	//sort the csv data by ages
+	data.sort(function(a,b) {
+		return d3.ascending(a.age, b.age);
+	});
+
 	//add dots
 	svg1.append("g")
 		.selectAll("dot")
@@ -79,7 +84,7 @@ d3.csv("/income_evaluation.csv", function(data) {
 			.attr("class", function(d,i) { return "pt" + i; })
 			.style("fill", "#937D9E")
 			.on("mouseover", function(d, i) {
-        console.log(i)
+        //console.log(i)
         d3.selectAll("circle.pt" + i)
           .style("fill", "Orchid")
           .attr("r", function (d) { return d.fnlwgt/dot_scale + 5;})
@@ -90,7 +95,17 @@ d3.csv("/income_evaluation.csv", function(data) {
           .attr("r", function (d) { return d.fnlwgt/dot_scale;})
     	})
 
-	x2.domain(data.map(function(d) {return d.age}))
+var dataNest = d3.nest()
+ 	.key(function(d) {return d.age;})
+ 	.rollup (function(v) { return {
+ 		averagehour: d3.mean(v, function(d) {return d.hours_per_week;})
+ 	};})
+ 	.entries(data)
+
+ 	console.log(dataNest)
+
+	x2.domain(data.map(function(d) {return d.age;}))
+	y2.domain([0, d3.max(dataNest, function(d) { return d.value.averagehour;})]);
 
 	svg2.append("g")
 			.attr("class", "x axis")
@@ -113,14 +128,23 @@ d3.csv("/income_evaluation.csv", function(data) {
 
   svg2.append("g")
   		.selectAll("bar")
-      .data(data)
+      .data(dataNest)
     	.enter()
     	.append("rect")
       	.style("fill", "steelblue")
-      	.attr("x", function(d) { return x2(d.age);})
+      	.attr("x", function(d) { return x2(d.key);})
       	.attr("width", x2.bandwidth())
-      	.attr("y", function(d) { return y2(d.hours_per_week);})
-      	.attr("height", function(d) { return height - y2(d.hours_per_week);})
+      	.attr("y", function(d) { return y2(d.value.averagehour);})
+      	.attr("height", function(d) { return height - y2(d.value.averagehour);})
+      	.on("mouseover", function(d, i) {
+        	//console.log(i)
+        	d3.select(this)
+          	.style("fill", "Orchid")
+    		})
+    		.on("mouseout", function(d, i) {
+        	d3.select(this)
+          	.style("fill", "steelblue")
+    		})
 });
 
 </script>
