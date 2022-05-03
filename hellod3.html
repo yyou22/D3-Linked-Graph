@@ -5,14 +5,14 @@
 <body>
 <h2>Hello, D3!</h2>
 
-<svg id="svg1" style="width:500px;height:500px"></svg>
-<svg id="svg2" style="width:500px;height:500px"></svg>
+<svg id="svg1" style="width:1000px;height:500px"></svg>
+<svg id="svg2" style="width:1000px;height:500px"></svg>
 
 <script>
 
 //set the dimensions and margins of the graph
-var margin = {top:20, right:20, bottom:20, left:30},
-	width = 500 - margin.left - margin.right,
+var margin = {top:20, right:20, bottom:100, left:30},
+	width = 1000 - margin.left - margin.right,
 	height = 400 - margin.top - margin.bottom
 
 //append SVG object to the page
@@ -31,7 +31,7 @@ const svg2 = d3.select("#svg2")
 	.attr("transform","translate(" + margin.left + "," + margin.top + ")");
 
 //how much the radius of each dot is scaled
-const dot_scale = 200000;
+const dot_scale = 100000;
 
 // SVG1
 //add x axis
@@ -76,7 +76,21 @@ d3.csv("/income_evaluation.csv", function(data) {
 			.attr("cx", function (d) { return x1(d.age);})
 			.attr("cy", function (d) { return y1(d.hours_per_week);})
 			.attr("r", function (d) { return d.fnlwgt/dot_scale;})
+			.attr("class", function(d,i) { return "pt" + i; })
 			.style("fill", "#937D9E")
+			.on("mouseover", function(d, i) {
+        console.log(i)
+        d3.selectAll("circle.pt" + i)
+          .style("fill", "Orchid")
+          .attr("r", function (d) { return d.fnlwgt/dot_scale + 5;})
+    	})
+    	.on("mouseout", function(d, i) {
+        d3.selectAll("circle.pt" + i)
+          .style("fill", "#937D9E")
+          .attr("r", function (d) { return d.fnlwgt/dot_scale;})
+    	})
+
+	x2.domain(data.map(function(d) {return d.age}))
 
 	svg2.append("g")
 			.attr("class", "x axis")
@@ -103,7 +117,7 @@ d3.csv("/income_evaluation.csv", function(data) {
     	.enter()
     	.append("rect")
       	.style("fill", "steelblue")
-      	.attr("x", function(d) { return x2(d.education);})
+      	.attr("x", function(d) { return x2(d.age);})
       	.attr("width", x2.bandwidth())
       	.attr("y", function(d) { return y2(d.hours_per_week);})
       	.attr("height", function(d) { return height - y2(d.hours_per_week);})
