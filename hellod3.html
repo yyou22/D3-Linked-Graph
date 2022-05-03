@@ -72,6 +72,15 @@ d3.csv("/income_evaluation.csv", function(data) {
 		return d3.ascending(a.age, b.age);
 	});
 
+	var dataNest = d3.nest()
+ 		.key(function(d) {return d.age;})
+ 		.rollup (function(v) { return {
+ 			averagehour: d3.mean(v, function(d) {return d.hours_per_week;})
+ 		};})
+ 		.entries(data)
+
+ 	//console.log(dataNest)
+
 	//add dots
 	svg1.append("g")
 		.selectAll("dot")
@@ -82,27 +91,26 @@ d3.csv("/income_evaluation.csv", function(data) {
 			.attr("cy", function (d) { return y1(d.hours_per_week);})
 			.attr("r", function (d) { return d.fnlwgt/dot_scale;})
 			.attr("class", function(d,i) { return "pt" + i; })
+			.attr("age", function(d) { return d.age; })
 			.style("fill", "#937D9E")
 			.on("mouseover", function(d, i) {
-        //console.log(i)
-        d3.selectAll("circle.pt" + i)
-          .style("fill", "Orchid")
-          .attr("r", function (d) { return d.fnlwgt/dot_scale + 5;})
+        //console.log(this);
+        var cir_sel = d3.select(this)
+          							.style("fill", "Orchid")
+          							.attr("r", function (d) { return d.fnlwgt/dot_scale + 5;})
+        //console.log(cir_sel.attr("age"));
+        d3.selectAll("rect")
+        	.filter(function(d) { return d.key === cir_sel.attr("age")})
+        	.style("fill", "Orchid")
     	})
     	.on("mouseout", function(d, i) {
-        d3.selectAll("circle.pt" + i)
-          .style("fill", "#937D9E")
-          .attr("r", function (d) { return d.fnlwgt/dot_scale;})
+        var cir_sel = d3.select(this)
+          							.style("fill", "#937D9E")
+          							.attr("r", function (d) { return d.fnlwgt/dot_scale;})
+        d3.selectAll("rect")
+        	.filter(function(d) { return d.key === cir_sel.attr("age")})
+        	.style("fill", "steelblue")
     	})
-
-var dataNest = d3.nest()
- 	.key(function(d) {return d.age;})
- 	.rollup (function(v) { return {
- 		averagehour: d3.mean(v, function(d) {return d.hours_per_week;})
- 	};})
- 	.entries(data)
-
- 	console.log(dataNest)
 
 	x2.domain(data.map(function(d) {return d.age;}))
 	y2.domain([0, d3.max(dataNest, function(d) { return d.value.averagehour;})]);
@@ -137,13 +145,19 @@ var dataNest = d3.nest()
       	.attr("y", function(d) { return y2(d.value.averagehour);})
       	.attr("height", function(d) { return height - y2(d.value.averagehour);})
       	.on("mouseover", function(d, i) {
-        	//console.log(i)
+        	//console.log(this)
         	d3.select(this)
           	.style("fill", "Orchid")
+          d3.selectAll("circle.pt" + i)
+          	.style("fill", "Orchid")
+          	.attr("r", function (d) { return d.fnlwgt/dot_scale + 5;})
     		})
     		.on("mouseout", function(d, i) {
         	d3.select(this)
           	.style("fill", "steelblue")
+          d3.selectAll("circle.pt" + i)
+          	.style("fill", "#937D9E")
+          	.attr("r", function (d) { return d.fnlwgt/dot_scale;})
     		})
 });
 
