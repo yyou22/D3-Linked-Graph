@@ -32,6 +32,8 @@ const svg2 = d3.select("#svg2")
 
 //how much the radius of each dot is scaled
 const dot_scale = 150000;
+//how much the radiu of each dot is increased when hovered
+const dot_incr = 3
 
 // SVG1
 //add x axis
@@ -97,7 +99,7 @@ d3.csv("/income_evaluation.csv", function(data) {
         //console.log(this);
         var cir_sel = d3.select(this)
           							.style("fill", "Orchid")
-          							.attr("r", function (d) { return d.fnlwgt/dot_scale + 5;})
+          							.attr("r", function (d) { return d.fnlwgt/dot_scale + dot_incr;})
         //console.log(cir_sel.attr("age"));
         d3.selectAll("rect")
         	.filter(function(d) { return d.key === cir_sel.attr("age")})
@@ -144,18 +146,21 @@ d3.csv("/income_evaluation.csv", function(data) {
       	.attr("width", x2.bandwidth())
       	.attr("y", function(d) { return y2(d.value.averagehour);})
       	.attr("height", function(d) { return height - y2(d.value.averagehour);})
+      	.attr("age", function(d) { return d.key; })
       	.on("mouseover", function(d, i) {
         	//console.log(this)
-        	d3.select(this)
+        	var bar_sel = d3.select(this)
+          								.style("fill", "Orchid")
+          d3.selectAll("circle")
+          	.filter(function(d) {return d.age === bar_sel.attr("age")})
           	.style("fill", "Orchid")
-          d3.selectAll("circle.pt" + i)
-          	.style("fill", "Orchid")
-          	.attr("r", function (d) { return d.fnlwgt/dot_scale + 5;})
+          	.attr("r", function (d) { return d.fnlwgt/dot_scale + dot_incr;})
     		})
     		.on("mouseout", function(d, i) {
-        	d3.select(this)
-          	.style("fill", "steelblue")
-          d3.selectAll("circle.pt" + i)
+        	var bar_sel = d3.select(this)
+          								.style("fill", "steelblue")
+          d3.selectAll("circle")
+          	.filter(function(d) { return d.age === bar_sel.attr("age")})
           	.style("fill", "#937D9E")
           	.attr("r", function (d) { return d.fnlwgt/dot_scale;})
     		})
