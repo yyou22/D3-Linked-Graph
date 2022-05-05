@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 
-<script src="https://d3js.org/d3.v4.js"></script>
+<script src="https://d3js.org/d3.v4.min.js"></script>
 <body>
 <h2>Hello, D3!</h2>
 
@@ -74,6 +74,30 @@ d3.csv("/income_evaluation.csv", function(data) {
 		return d3.ascending(a.age, b.age);
 	});
 
+	//come the number of different classes of income
+	var counts = {};
+	data.forEach(function(r) {
+		if (!counts[r.age]) {
+			counts[r.age] = {};
+		}
+		if (!counts[r.age][r.income]) {
+				counts[r.age][r.income] = 0;
+			}
+		counts[r.age][r.income]++;
+	})
+
+	//obtain the maximum income for each age
+	for (var key in counts) {
+		if (!counts[key]['max']) {
+			counts[key]['max'] = 0;
+		}
+		for (var key_ in counts[key]) {
+			if (counts[key][key_] > counts[key]['max']) {
+				counts[key]['max'] = key_;
+			}
+		}
+	}
+
 	var dataNest = d3.nest()
  		.key(function(d) {return d.age;})
  		.rollup (function(v) { return {
@@ -81,7 +105,9 @@ d3.csv("/income_evaluation.csv", function(data) {
  		};})
  		.entries(data)
 
- 	//console.log(dataNest)
+ 	dataNest.forEach(function(r) {
+ 		r.avgincome = counts[r.key]['max'];
+ 	})
 
 	//add dots
 	svg1.append("g")
@@ -96,13 +122,11 @@ d3.csv("/income_evaluation.csv", function(data) {
 			.attr("age", function(d) { return d.age; })
 			.style("fill", "#937D9E")
 			.on("mouseover", function(d, i) {
-        //console.log(this);
         var cir_sel = d3.select(this)
           							.style("fill", "Orchid")
           							.attr("r", function (d) { return d.fnlwgt/dot_scale + dot_incr;})
-        //console.log(cir_sel.attr("age"));
         d3.selectAll("rect")
-        	.filter(function(d) { return d.key === cir_sel.attr("age")})
+        	.filter(function(d) { return d.key === cir_sel.attr("age");})
         	.style("fill", "Orchid")
     	})
     	.on("mouseout", function(d, i) {
@@ -141,14 +165,22 @@ d3.csv("/income_evaluation.csv", function(data) {
       .data(dataNest)
     	.enter()
     	.append("rect")
-      	.style("fill", "steelblue")
+      	//.style("fill", "steelblue")
+      	.style("fill", function(d) {
+      		console.log(d.avgincome)
+      		if (d.avgincome == '<=50K') {
+      			return '#8DD794';
+      		}
+      		else {
+      			return '#D78DC4';
+      		}
+      	})
       	.attr("x", function(d) { return x2(d.key);})
       	.attr("width", x2.bandwidth())
       	.attr("y", function(d) { return y2(d.value.averagehour);})
       	.attr("height", function(d) { return height - y2(d.value.averagehour);})
       	.attr("age", function(d) { return d.key; })
       	.on("mouseover", function(d, i) {
-        	//console.log(this)
         	var bar_sel = d3.select(this)
           								.style("fill", "Orchid")
           d3.selectAll("circle")
