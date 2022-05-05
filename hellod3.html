@@ -5,13 +5,20 @@
 <body>
 <h2>Hello, D3!</h2>
 
-<svg id="svg1" style="width:1000px;height:500px"></svg>
-<svg id="svg2" style="width:1000px;height:500px"></svg>
+<svg id="svg1" style="width:1000px;height:400px"></svg>
+
+<p>Variables chosen: Age (integers on x-axis), hours-per-week (integers on y-axis), 
+fnlwgt/final weight (dot size).</p>
+
+<svg id="svg2" style="width:1000px;height:400px"></svg>
+
+<p>Variables chosen: Age (integers on x-axis), average hours-per-week (integers on y-axis), 
+average income (bar colors).</p>
 
 <script>
 
 //set the dimensions and margins of the graph
-var margin = {top:20, right:20, bottom:100, left:30},
+var margin = {top:20, right:20, bottom:20, left:30},
 	width = 1000 - margin.left - margin.right,
 	height = 400 - margin.top - margin.bottom
 
@@ -120,22 +127,38 @@ d3.csv("/income_evaluation.csv", function(data) {
 			.attr("r", function (d) { return d.fnlwgt/dot_scale;})
 			.attr("class", function(d,i) { return "pt" + i; })
 			.attr("age", function(d) { return d.age; })
-			.style("fill", "#937D9E")
+			.style("fill", "#B0349B")
+			.attr("stroke", "#691A45")
+			.attr("stroke-width", 0.1)
 			.on("mouseover", function(d, i) {
         var cir_sel = d3.select(this)
-          							.style("fill", "Orchid")
-          							.attr("r", function (d) { return d.fnlwgt/dot_scale + dot_incr;})
+          					.style("fill", "#B3CE19")
+          					.attr("r", function (d) { return d.fnlwgt/dot_scale + dot_incr;})
         d3.selectAll("rect")
         	.filter(function(d) { return d.key === cir_sel.attr("age");})
-        	.style("fill", "Orchid")
+        	.style("fill", function(d) {
+      			if (d.avgincome == '<=50K') {
+      				return '#A5B352';
+      			}
+      			else {
+      				return '#AA3273';
+      			}
+      		})
     	})
     	.on("mouseout", function(d, i) {
         var cir_sel = d3.select(this)
-          							.style("fill", "#937D9E")
-          							.attr("r", function (d) { return d.fnlwgt/dot_scale;})
+          					.style("fill", "#B0349B")
+          					.attr("r", function (d) { return d.fnlwgt/dot_scale;})
         d3.selectAll("rect")
         	.filter(function(d) { return d.key === cir_sel.attr("age")})
-        	.style("fill", "steelblue")
+        	.style("fill", function(d) {
+      			if (d.avgincome == '<=50K') {
+      				return '#8DD794';
+      			}
+      			else {
+      				return '#D78DC4';
+      			}
+      		})
     	})
 
 	x2.domain(data.map(function(d) {return d.age;}))
@@ -165,9 +188,7 @@ d3.csv("/income_evaluation.csv", function(data) {
       .data(dataNest)
     	.enter()
     	.append("rect")
-      	//.style("fill", "steelblue")
       	.style("fill", function(d) {
-      		console.log(d.avgincome)
       		if (d.avgincome == '<=50K') {
       			return '#8DD794';
       		}
@@ -182,18 +203,32 @@ d3.csv("/income_evaluation.csv", function(data) {
       	.attr("age", function(d) { return d.key; })
       	.on("mouseover", function(d, i) {
         	var bar_sel = d3.select(this)
-          								.style("fill", "Orchid")
+	          					.style("fill", function(d) {
+	      							if (d.avgincome == '<=50K') {
+	      								return '#A5B352';
+	      							}
+	      							else {
+	      								return '#AA3273';
+	      							}
+	      						})
           d3.selectAll("circle")
           	.filter(function(d) {return d.age === bar_sel.attr("age")})
-          	.style("fill", "Orchid")
+          	.style("fill", "#B3CE19")
           	.attr("r", function (d) { return d.fnlwgt/dot_scale + dot_incr;})
     		})
-    		.on("mouseout", function(d, i) {
+    	.on("mouseout", function(d, i) {
         	var bar_sel = d3.select(this)
-          								.style("fill", "steelblue")
+          					.style("fill", function(d) {
+      							if (d.avgincome == '<=50K') {
+      								return '#8DD794';
+      							}
+      							else {
+      								return '#D78DC4';
+      							}
+      						})
           d3.selectAll("circle")
           	.filter(function(d) { return d.age === bar_sel.attr("age")})
-          	.style("fill", "#937D9E")
+          	.style("fill", "#B0349B")
           	.attr("r", function (d) { return d.fnlwgt/dot_scale;})
     		})
 });
