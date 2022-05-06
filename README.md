@@ -1,4 +1,4 @@
-# D3 Linked Graphs (Hello, D3!)
+# D3 Linked Graphs
 
 This repository contains a html file (with Javascript embedded) that contains two simple visualizations using the D3 library based on the Income Evaluation Dataset. Each of the visualizations visually encodes three variables (i.e., columns of the data table) in the dataset.
 
