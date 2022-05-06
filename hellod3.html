@@ -1,19 +1,27 @@
 <!DOCTYPE html>
 <html>
 
+<style>
+p.ex {
+  max-width: 1000px;
+}
+</style>
+
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <body>
 <h2>Hello, D3!</h2>
 
+<p class="ex">External References:</p>
+
 <svg id="svg1" style="width:1000px;height:400px"></svg>
 
-<p>Variables chosen: Age (integers on x-axis), hours-per-week (integers on y-axis), 
-fnlwgt/final weight (dot size).</p>
+<p class="ex">Variables chosen: Age (integers on x-axis), hours-per-week (integers on y-axis), 
+fnlwgt/final weight (dot size); each dot represents an entry in the dataset and is linked
+to the bar representing the corresponding age group. From the scatterplot, we can see a general tendency that shifts towards longer working hours as the individuals enter middle age, which eventually shifts down again as the entries approach an older age. </p>
 
 <svg id="svg2" style="width:1000px;height:400px"></svg>
 
-<p>Variables chosen: Age (integers on x-axis), average hours-per-week (integers on y-axis), 
-average income (bar colors).</p>
+<p class="ex">Variables chosen: Age (integers on x-axis), average hours-per-week (integers on y-axis), average income (bar colors, green for <=50K and pink for >50k); hovering each bar will also highlight all circles in the scatterplot that belong to the same age group. From the bar chart, we can notice the same increase in average working hours when the entries middle age, which then gradually decreases as they approach an older age; nonethless, there is a surprising surge in average working hours towards the end of the age spectrum.</p>
 
 <script>
 
