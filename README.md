@@ -7,5 +7,5 @@ The two visualizations are interactively linked together. When a user is hoverin
 Link to the demonstration: https://yyou22.github.io/D3-Linked-Graph/
 
 <p align="center">
-    <img src="illustration.png" width="500"\>
+    <img src="illustration.png" width="1000"\>
 </p>
