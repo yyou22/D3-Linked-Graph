@@ -92,7 +92,7 @@ var yAxis2 = d3.axisLeft()
 	.ticks(10);
 
 //read the data in the same directory
-d3.csv("/income_evaluation.csv", function(data) {
+d3.csv("./income_evaluation.csv", function(data) {
 
 	//sort the csv data by ages
 	data.sort(function(a,b) {
