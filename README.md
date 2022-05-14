@@ -10,7 +10,7 @@ The first visualization is a scatterplot that encodes age (integers on x-axis), 
 
 ## Difficulties
 
-The most challenging aspect of this exercise comes from the API differences between each version of D3. Looking up tutorials and resources is therefore difficult, as the functions that work in one tutorial may be renamed or non-existent in the version I selected for my implementation. Therefore, there was an additional process of "translating" the syntax from one version to another. Furthermore, there is also a small learning curve from my lack of experience in JavaScript.
+The most challenging aspect of this exercise comes from the API differences between each version of D3. Looking up tutorials and resources is therefore difficult, as the functions that work in one tutorial may be renamed or non-existent in the version I selected for my implementation. Therefore, there was an additional process of "translating" the syntax from one version to another.
 
 ## Main Resources
 
